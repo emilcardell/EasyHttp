@@ -10,7 +10,7 @@ namespace EasyHttp.Configuration
         private static EasyHttpConfiguration currentConfiguration;
         public IList<ISerializer> Serializers { get; set; }
         public IList<IDeserializer> Deserializers { get; set; }
-        public string RequestContentType { get; set; }
+        public string AcceptContentType { get; set; }
 
         public static EasyHttpConfiguration Current
         {
@@ -45,7 +45,7 @@ namespace EasyHttp.Configuration
                 {
                     Serializers = new List<ISerializer>(),
                     Deserializers = new List<IDeserializer>(),
-                    RequestContentType = HttpContentTypes.ApplicationJson
+                    AcceptContentType = HttpContentTypes.ApplicationJson
                 };
             }
         }

@@ -72,27 +72,30 @@ namespace EasyHttp.Http
         readonly UriComposer uriComposer;
         readonly IList<IDeserializer> deserializers;
         readonly IList<ISerializer> serializers; 
-
         
         public bool LoggingEnabled { get; set; }
         public bool ThrowExceptionOnHttpError { get; set; }
 
+        public HttpClient(): this(string.Empty, null){}
 
+        public HttpClient(string baseUri): this(baseUri, null){}
 
-        public HttpClient(): this(null, null, null){}
-
-        public HttpClient(string baseUri): this(baseUri, null, null){}
-
-        public HttpClient(string baseUri, IList<ISerializer> serializers, IList<IDeserializer> deserializers)
+        public HttpClient(string baseUri, Action<EasyHttpConfiguration> configurationOverride)
         {
             uriComposer = new UriComposer();
             
             this.baseUri = baseUri;
 
-            this.deserializers = deserializers ?? EasyHttpConfiguration.Current.Deserializers;
-            this.serializers = serializers ?? EasyHttpConfiguration.Current.Serializers;
-           
+            var configuration = EasyHttpConfiguration.Current;
+
+            if(configurationOverride != null)
+                configurationOverride.Invoke(configuration);
+            
+            deserializers = configuration.Deserializers;
+            serializers = configuration.Serializers;
+
             Request = new HttpRequest(serializers);
+            Request.Accept = configuration.AcceptContentType;
         }
 
         public HttpResponse Response { get; private set; }
