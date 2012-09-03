@@ -55,32 +55,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 #endregion
-
-using System.Collections.Generic;
-using System.Dynamic;
-using EasyHttp.Infrastructure;
-
 namespace EasyHttp.Codecs
 {
-    public class DynamicType: DynamicObject
+    public interface IDeserializer
     {
-        readonly Dictionary<string, object> _properties = new Dictionary<string, object>();
-
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            if (_properties.ContainsKey(binder.Name.ToLower()))
-            {
-                result = _properties[binder.Name.ToLower()];
-                return true;
-            }
-           
-            throw new PropertyNotFoundException(binder.Name);
-        }
-
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            _properties[binder.Name.ToLower()] = value;
-            return true;
-        }
+        T DeserializeToStatic<T>(string input, string contentType);
+        dynamic DeserializeToDynamic(string input, string contentType);
+        bool CanDeserialize(string contentType);
     }
 }

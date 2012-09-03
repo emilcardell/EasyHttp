@@ -33,10 +33,6 @@
     <NoWarn>169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JsonFx, Version=2.0.1106.2610, Culture=neutral, PublicKeyToken=315052dd637f8a52, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JsonFx.2.0.1106.2610\lib\net40\JsonFx.dll</HintPath>
-    </Reference>
     <Reference Include="Machine.Specifications, Version=0.5.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Machine.Specifications.0.5.7\lib\net40\Machine.Specifications.dll</HintPath>
@@ -61,9 +57,6 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="BugRepros\ExtraHeaderIssue.cs" />
-    <Compile Include="BugRepros\CustomPropertyNameIssue.cs" />
-    <Compile Include="BugRepros\DecodingIssues.cs" />
-    <Compile Include="BugRepros\EnumEncodingIssue.cs" />
     <Compile Include="BugRepros\UploadFileIssue.cs" />
     <Compile Include="Specs\DynamicObjectToUrlSpecs.cs" />
     <Compile Include="Specs\HttpErrorHandlingSpecs.cs" />
@@ -94,7 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasyHttp\EasyHttp.csproj">
-      <Project>{9239DA70-1736-4291-8D18-266999E54445}</Project>
+      <Project>{9239da70-1736-4291-8d18-266999e54445}</Project>
       <Name>EasyHttp</Name>
     </ProjectReference>
   </ItemGroup>

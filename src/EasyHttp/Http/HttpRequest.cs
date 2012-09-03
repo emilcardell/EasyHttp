@@ -70,7 +70,7 @@ using EasyHttp.Infrastructure;
 
 namespace EasyHttp.Http
 {
-    // TODO: This class needs cleaning up and abstracting the encoder one more level
+    // TODO: This class needs cleaning up and abstracting the serializers one more level
     public class HttpRequest
     {
 
@@ -106,7 +106,7 @@ namespace EasyHttp.Http
 
         HttpWebRequest httpWebRequest;
 
-        readonly IEncoder _encoder;
+        readonly IList<ISerializer> _serializers;
         string _username;
         string _password;
         private bool _forceBasicAuth;
@@ -122,7 +122,7 @@ namespace EasyHttp.Http
 
         }
 
-        public HttpRequest(IEncoder encoder)
+        public HttpRequest(IList<ISerializer> serializers)
         {
             RawHeaders = new Dictionary<string, object>();
 
@@ -133,7 +133,7 @@ namespace EasyHttp.Http
 
             Accept = String.Join(";", HttpContentTypes.TextHtml, HttpContentTypes.ApplicationXml,
                                  HttpContentTypes.ApplicationJson);
-            _encoder = encoder;
+            _serializers = serializers;
 
             Timeout = 100000; //http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.timeout.aspx
         }
@@ -250,12 +250,10 @@ namespace EasyHttp.Http
 
         void SetupData()
         {
-            var bytes = _encoder.Encode(Data, ContentType);
-
             var requestStream = httpWebRequest.GetRequestStream();
 
-            requestStream.Write(bytes, 0, bytes.Length);
-
+            _serializers.GetDeserializerForContentType(ContentType).Serialize(ContentType, Data, requestStream);
+            
             requestStream.Close();
         }
 

@@ -56,31 +56,36 @@
 // THE SOFTWARE.
 #endregion
 
+using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using EasyHttp.Infrastructure;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace EasyHttp.Codecs
 {
-    public class DynamicType: DynamicObject
+    public class DefaultSerializer : ISerializer
     {
-        readonly Dictionary<string, object> _properties = new Dictionary<string, object>();
+        private readonly JsonSerializer jsonSerializer = new JsonSerializer();
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public DefaultSerializer(){}
+        
+        public DefaultSerializer(IEnumerable<JsonConverter> converters)
         {
-            if (_properties.ContainsKey(binder.Name.ToLower()))
+            foreach (var converter in converters)
+                jsonSerializer.Converters.Add(converter);
+        }
+        public void Serialize(string contentType, object input, Stream outputStream)
+        {
+            using (var writer = new JsonTextWriter(new StreamWriter(outputStream)))
             {
-                result = _properties[binder.Name.ToLower()];
-                return true;
+                jsonSerializer.Serialize(writer, input);
+                writer.Flush();
             }
-           
-            throw new PropertyNotFoundException(binder.Name);
         }
 
-        public override bool TrySetMember(SetMemberBinder binder, object value)
+        public bool CanSerialize(string contentType)
         {
-            _properties[binder.Name.ToLower()] = value;
-            return true;
+            return contentType.Equals("application/json", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

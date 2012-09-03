@@ -67,34 +67,32 @@ namespace EasyHttp.Http
 {
     public class HttpClient
     {
-        readonly string _baseUri;
-        readonly IEncoder _encoder;
-        string _downloadFilename;
-        readonly IDecoder _decoder;
-        readonly UriComposer _uriComposer;
+        readonly string baseUri;
+        string downloadFilename;
+        readonly UriComposer uriComposer;
+        readonly IList<IDeserializer> deserializers;
+        readonly IList<ISerializer> serializers; 
+
         
         public bool LoggingEnabled { get; set; }
         public bool ThrowExceptionOnHttpError { get; set; }
-      
 
-        public HttpClient():this(new DefaultEncoderDecoderConfiguration())
+
+
+        public HttpClient(): this(null, null, null){}
+
+        public HttpClient(string baseUri): this(baseUri, null, null){}
+
+        public HttpClient(string baseUri, IList<ISerializer> serializers, IList<IDeserializer> deserializers)
         {
-
-        }
-      
-
-        public HttpClient(IEncoderDecoderConfiguration encoderDecoderConfiguration)
-        {
-            _encoder = encoderDecoderConfiguration.GetEncoder();
-            _decoder = encoderDecoderConfiguration.GetDecoder();
-            _uriComposer = new UriComposer();
+            uriComposer = new UriComposer();
             
-            Request = new HttpRequest(_encoder);
-        }
+            this.baseUri = baseUri;
 
-        public HttpClient(string baseUri): this(new DefaultEncoderDecoderConfiguration())
-        {
-            _baseUri = baseUri;
+            this.deserializers = deserializers ?? EasyHttpConfiguration.Current.Deserializers;
+            this.serializers = serializers ?? EasyHttpConfiguration.Current.Serializers;
+           
+            Request = new HttpRequest(serializers);
         }
 
         public HttpResponse Response { get; private set; }
@@ -102,7 +100,7 @@ namespace EasyHttp.Http
 
         void InitRequest(string uri, HttpMethod method, object query)
         {
-            Request.Uri = _uriComposer.Compose(_baseUri, uri, query);
+            Request.Uri = uriComposer.Compose(baseUri, uri, query);
             Request.Data = null;
             Request.PutFilename = String.Empty;
             Request.Expect = false;
@@ -117,7 +115,7 @@ namespace EasyHttp.Http
         public HttpResponse GetAsFile(string uri, string filename)
         {
             InitRequest(uri, HttpMethod.GET, null);
-            _downloadFilename = filename;
+            downloadFilename = filename;
             return ProcessRequest();
         }
         
@@ -200,9 +198,9 @@ namespace EasyHttp.Http
         {
             var httpWebRequest = Request.PrepareRequest();
 
-            Response = new HttpResponse(_decoder);
+            Response = new HttpResponse(deserializers);
 
-            Response.GetResponse(httpWebRequest, _downloadFilename);
+            Response.GetResponse(httpWebRequest, downloadFilename);
             
             if (ThrowExceptionOnHttpError && IsHttpError())
             {

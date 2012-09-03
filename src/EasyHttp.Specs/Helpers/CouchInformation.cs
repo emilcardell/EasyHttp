@@ -56,13 +56,10 @@
 // THE SOFTWARE.
 #endregion
 
-using JsonFx.Json;
-
 namespace EasyHttp.Specs.Helpers
 {
     public class CouchInformation
     {
-        [JsonName("couchdb")]
         public string message { get; set; }
         public string version { get; set; }
     }
