@@ -7,7 +7,11 @@ namespace EasyHttp.Codecs
     {
         public static IDeserializer GetDeserializerForContentType(this IList<IDeserializer> deserializers, string contentType)
         {
-            return deserializers.FirstOrDefault(x => x.CanDeserialize(contentType));
+            var result = deserializers.FirstOrDefault(x => x.CanDeserialize(contentType));
+            if(result == null)
+                throw new DeserializerNotFoundException("Deserializer for content type " + contentType + " is not found.");
+            
+            return result;
         }
     }
 }
