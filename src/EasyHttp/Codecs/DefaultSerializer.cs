@@ -59,6 +59,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using EasyHttp.Http;
 using Newtonsoft.Json;
 
 namespace EasyHttp.Codecs
@@ -85,7 +86,7 @@ namespace EasyHttp.Codecs
 
         public bool CanSerialize(string contentType)
         {
-            return contentType.Equals("application/json", StringComparison.InvariantCultureIgnoreCase);
+            return contentType.Equals(HttpContentTypes.ApplicationJson, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using EasyHttp.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -30,7 +31,7 @@ namespace EasyHttp.Codecs
 
         public bool CanDeserialize(string contentType)
         {
-            return contentType.Equals("application/json", StringComparison.InvariantCultureIgnoreCase);
+            return contentType.Equals(HttpContentTypes.ApplicationJson, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
